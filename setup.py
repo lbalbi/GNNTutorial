@@ -53,7 +53,7 @@ else:
 print("If running locally, now running:")
 cmd_py = "uv python install 3.12"
 cmd_venv = "cd test && uv venv --python 3.12 .venv"
-cmd_src = "source .venv~/bin/activate"
+cmd_src = "source .venv/bin/activate"
 
 run_cmd("cmd1 (Python install)", cmd_py)
 run_cmd("cmd2 (environment)", cmd_venv)
