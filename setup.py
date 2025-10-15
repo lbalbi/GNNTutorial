@@ -26,10 +26,14 @@ else:
     """))
     print(f"Created project at: {project_dir}")
 
-print("If running locally, now run:")
-print(" uv python install 3.12")
-print(" cd test && uv venv --python 3.12 .venv")
-print(" ource .venv~/bin/activate")
+print("If running locally, now running:")
+cmd_py = "uv python install 3.12"
+cmd_venv = "cd test && uv venv --python 3.12 .venv"
+cmd_src = "source .venv~/bin/activate"
+
+run_cmd("cmd1 (Python install)", cmd_py)
+run_cmd("cmd2 (environment)", cmd_venv)
+run_cmd("cmd3 (activate env)", cmd_src)
 
 
 project_dir = pathlib.Path("test").resolve()
@@ -45,10 +49,10 @@ print(f"  PyG wheels tag: torch-{PYG_TAG}")
 
 torch_index = f"https://download.pytorch.org/whl/{CUDA_TAG}"
 torch_pkgs  = f"torch=={TORCH_VERSION} torchvision torchaudio"
-cmd1 = f'cd "{project_dir}" && uv pip install --index-url {torch_index} {torch_pkgs}'
-cmd2 = f'cd "{project_dir}" && uv pip install scikit-learn matplotlib'
+cmd1 = f'cd "{project_dir}" && uv add --index-url {torch_index} {torch_pkgs}'
+cmd2 = f'cd "{project_dir}" && uv add scikit-learn matplotlib'
 pyg_find_links = f"https://data.pyg.org/whl/torch-{PYG_TAG}.html"
-cmd3 = f'cd "{project_dir}" && uv pip install torch-geometric -f {pyg_find_links}'
+cmd3 = f'cd "{project_dir}" && uv add torch-geometric -f {pyg_find_links}'
 
 print("\nRunning locally ....")
 
