@@ -1,6 +1,30 @@
 import pathlib, textwrap, os
 
 ## RUN THIS SCRIPT AND FOLLOW THE COMMANDS PRINTED IN THE OUTPUT FILE ""
+import subprocess, sys, shutil, datetime
+
+# Where to capture the installer output
+log_path = project_dir / "install.log"
+
+def run_cmd(label: str, cmd: str):
+    """Run a shell command, stream output to console, and tee to the log file."""
+    print(f"\n[{label}] → {cmd}")
+    with open(log_path, "a", encoding="utf-8") as log:
+        log.write(f"\n[{datetime.datetime.now().isoformat()}] $ {cmd}\n")
+        proc = subprocess.Popen(
+            cmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            sys.stdout.write(line)
+            log.write(line)
+        rc = proc.wait()
+        log.write(f"\n[{label}] exit code: {rc}\n")
+        if rc != 0: raise RuntimeError(f"{label} failed with exit code {rc}")
 
 project_dir = pathlib.Path("test").resolve()
 if project_dir.exists():
@@ -55,33 +79,6 @@ pyg_find_links = f"https://data.pyg.org/whl/torch-{PYG_TAG}.html"
 cmd3 = f'cd "{project_dir}" && uv add torch-geometric -f {pyg_find_links}'
 
 print("\nRunning locally ....")
-
-
-import subprocess, sys, shutil, datetime
-
-# Where to capture the installer output
-log_path = project_dir / "install.log"
-
-def run_cmd(label: str, cmd: str):
-    """Run a shell command, stream output to console, and tee to the log file."""
-    print(f"\n[{label}] → {cmd}")
-    with open(log_path, "a", encoding="utf-8") as log:
-        log.write(f"\n[{datetime.datetime.now().isoformat()}] $ {cmd}\n")
-        proc = subprocess.Popen(
-            cmd,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
-        assert proc.stdout is not None
-        for line in proc.stdout:
-            sys.stdout.write(line)
-            log.write(line)
-        rc = proc.wait()
-        log.write(f"\n[{label}] exit code: {rc}\n")
-        if rc != 0: raise RuntimeError(f"{label} failed with exit code {rc}")
-
 # Execute the three steps
 run_cmd("cmd1 (PyTorch stack)", cmd1)
 run_cmd("cmd2 (scikit-learn)", cmd2)
