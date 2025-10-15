@@ -7,10 +7,12 @@
 #SBATCH --time=00:05:00
 #SBATCH --partition=tier1
 
+
 # # 1
 python setup.py
 # #2
-
+cd test
+source .venv/bin/activate
 uv run python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), flush=True)"
 
 # #3
